@@ -1,5 +1,3 @@
-[kubernetes中文文档集](./k8s-docs/README.md)
-
 # OKE中文文档集
 
 
@@ -20,11 +18,11 @@
 
 镜像库：
 
-1. [https://jihulab.com/k8sers/docs](https://jihulab.com/k8sers/docs/-/blob/master/README.md)
+1. [https://jihulab.com/k8sers/docs](https://jihulab.com/k8sers/docs/-/blob/main/README.md)
 
-2. [https://gitee.com/k8sers/docs](https://gitee.com/k8sers/docs/blob/master/README.md)
+2. [https://gitee.com/k8sers/docs](https://gitee.com/k8sers/docs/blob/main/README.md)
 
-3. [https://github.com/k8sers/docs](https://github.com/k8sers/docs/blob/master/README.md)
+3. [https://github.com/k8sers/docs](https://github.com/k8sers/docs/blob/main/README.md)
 
 
 
