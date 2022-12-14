@@ -8,6 +8,7 @@
 - [OKE自动加污点(taints)](./OKE自动加污点(taints)/README.md)
 - [安装k9s管理OKE](./安装k9s管理OKE/README.md)
 - [服务类型为LoadBalancer时如何设置SSL端口为非443的值](./服务类型为LoadBalancer时如何设置SSL端口为非443的值/README.md)
+- [服务类型为LoadBalancer时如何获取源IP](./服务类型为LoadBalancer时如何获取源IP/README.md)
 - [在OKE上最小化安装KubeSphere](./在OKE上最小化安装KubeSphere/README.md)
 - [在OKE上部署PrometheusOperator和kube-prometheus](./在OKE上部署PrometheusOperator和kube-prometheus/README.md)
 - [在OKE上创建基于FileStorage(NFS)的StorageClass](./在OKE上创建基于FileStorage(NFS)的StorageClass/README.md)
