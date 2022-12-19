@@ -16,6 +16,12 @@
    helm install -n nginx-ingress nginx-ingress nginx-stable/nginx-ingress
    ```
 
+   (Optional)如果想启用设置Snippets功能
+
+   ```
+   helm install -n nginx-ingress nginx-ingress --set controller.enableSnippets=true nginx-stable/nginx-ingress
+   ```
+
 3. 确认是否创建了新的ingressclass，
 
    ```

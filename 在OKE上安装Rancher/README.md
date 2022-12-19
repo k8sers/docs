@@ -111,7 +111,19 @@
    kubectl patch ingress rancher --type='json' -p='[{"op": "replace", "path": "/spec/rules/0/http/paths/0", "value": {"backend": {"service": {"name": "rancher", "port": {"number": 80}}}, "path": "/", "pathType": "ImplementationSpecific" }}]'
    ```
 
-8. (Optional)卸载Rancher，
+8. (Optional)如果Rancher是通过Nginx Ingress Controller进行公开的情况，需要在ingress里面追加以下配置，
+
+   ```
+   kubectl -n cattle-system edit ingress rancher
+   
+   ---在annotations里追加 
+       nginx.org/location-snippets: |
+           proxy_set_header Upgrade $http_upgrade;
+           proxy_set_header Connection "upgrade";
+   ---
+   ```
+
+9. (Optional)卸载Rancher，
 
    ```
    git clone https://github.com/rancher/rancher-cleanup.git; cd rancher-cleanup
