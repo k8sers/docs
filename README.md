@@ -1,6 +1,14 @@
 # OKE中文文档集
 
 
+- [OKE入门](https://minqiaowang.github.io/oci-k8s-cn/workshops/freetier/?lab=introduction)
+- [OKE上部署Metrics Server](https://nengbai.github.io/oke-dashboard/?lab=oke-metrics&nav=open)
+- [OKE上部署Kubernetes Dashboard](https://nengbai.github.io/oke-dashboard/?lab=oke-dashboard&nav=open)
+- [OKE上部署Kubesphere](https://nengbai.github.io/oke-dashboard/?lab=oke-kubesphere&nav=open)
+- [OKE上部署Kuboard](https://nengbai.github.io/oke-dashboard/?lab=oke-kuboard&nav=open)
+- [OKE Node 自动弹性伸缩(Cluster Autoscaler)操作手册](https://nengbai.github.io/oke-dashboard/?lab=oke-ca&nav=open)
+- [OKE Pod自动弹性伸缩-Horizontal Pod Autoscaling](https://nengbai.github.io/oke-dashboard/?lab=oke-hpa&nav=open)
+- [OKE 适配Arm-based 和 GPU Nodes](https://nengbai.github.io/oke-dashboard/?lab=oke-arm-gpu&nav=open)
 - [CNCF认证 Conformance Tests](https://github.com/cncf/k8s-conformance)
 - [通过token认证的方式来加速OKE集群的访问](./通过token认证的方式来加速OKE集群的访问/README.md)
 - [通过证书认证的方式来加速OKE集群的访问](./通过证书认证的方式来加速OKE集群的访问/README.md)
@@ -25,9 +33,3 @@
 2. [https://gitee.com/k8sers/docs](https://gitee.com/k8sers/docs/blob/main/README.md)
 
 3. [https://github.com/k8sers/docs](https://github.com/k8sers/docs/blob/main/README.md)
-
-
-
-其它：
-
-[Oracle Container Engine for Kubernetes | 简介 ](https://minqiaowang.github.io/oci-k8s-cn/workshops/freetier/?lab=introduction)
