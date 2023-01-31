@@ -44,6 +44,10 @@ sudo mount -o nosuid,resvport 10.0.10.191:/FileSystem-Erda /netdata
 sudo sh -c 'echo "10.0.10.191:/FileSystem-Erda /netdata nfs deafults,nosuid,resvport 0 0" >> /etc/fstab'
 ```
 
+
+
+如果已经有Node子网内所有协议已放行，请忽略下面的步骤：（10.0.10.0/24 All Protocals）：
+
 在挂载前，需要先开通网络访问策略，进入 **Networking => Virtual Cloud Networks => oke-Node所在VCN  vcn-quick-Wilbur-Erda-1d8ba0783 => Node所在子网 oke-nodesubnet-quick-Wilbur-Erda-1d8ba0783-regional => Node所用安全列表 oke-nodeseclist-quick-Wilbur-Erda-1d8ba0783** 。新增以下4条Ingress规则（我的NFS和Node都在10.0.10.0/24子网）：
 
 ![image-20230118103603435](README.assets/image-20230118103603435.png)
@@ -56,7 +60,7 @@ sudo sh -c 'echo "10.0.10.191:/FileSystem-Erda /netdata nfs deafults,nosuid,resv
 
 ![image-20230117183425776](readme.assets/image-20230117183425776.png)
 
-找到隐藏的高级选型中的初始化脚本， 填入
+找到隐藏的高级选型中的初始化脚本， 填入（**记得更换Mount Target的IP**）
 
 ```shell
 #!/bin/bash
@@ -69,6 +73,7 @@ echo "y" | sudo /usr/libexec/oci-growfs
 
 
 sudo mkdir /netdata
+#把下面的IP换成你的Mount Target显示的IP
 sudo mount -o nosuid,resvport 10.0.10.191:/FileSystem-Erda /netdata
 sudo sh -c 'echo "10.0.10.191:/FileSystem-Erda /netdata nfs deafults,nosuid,resvport 0 0" >> /etc/fstab'
 sudo mount -a
@@ -101,6 +106,7 @@ sudo mount -a
 执行
 
 ```shell
+chmod -R 600 ~/.kube/config
 kubectl get node -o wide
 ```
 
@@ -143,6 +149,18 @@ kubectl create clusterrolebinding <my-cluster-admin-binding> --clusterrole=clust
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.5.1/deploy/static/provider/cloud/deploy.yaml
 ```
 
+##### Step 2. 安装Kubeprober
+
+
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/erda-project/kubeprober/master/deployment/probe-agent-standalone.yaml
+```
+
+
+
+
+
 ##### Step 2. 修改ERDA
 
 ERDA最高支持 K8s 1.20版本。  我们创建的OKE中K8s是1.25版本，要调整部分内容。 在OCI Cloud Shell中执行
@@ -156,7 +174,7 @@ tar xzvf erda-2.2.0.tgz
 
 ![image-20230118131315782](README.assets/image-20230118131315782.png)
 
-打开OCI右上角Editoer，编辑 erda/crds/erda_crd.yaml,改为以下内容
+打开OCI右上角Editoer，编辑 erda/crds/erda_crd.yaml。因为K8s 1.22版本不再支持Beta版的CRD，所以将CRD格式调整为以下内容
 
 ```shell
 apiVersion: apiextensions.k8s.io/v1
@@ -170,8 +188,6 @@ spec:
     plural: erdas
     singular: erda
   scope: Namespaced
-  subresources:
-    status: {}
   versions:
     - name: v1beta1
       served: true
@@ -179,30 +195,53 @@ spec:
       schema:
         openAPIV3Schema:
           type: object
-  additionalPrinterColumns:
-    - name: Status
-      type: string
-      JSONPath: .status.phase
-      description: Erda cluster current status
-    - name: LastMessage
-      type: string
-      JSONPath: .status.conditions[0].reason
-      description: last message
+      additionalPrinterColumns:
+        - name: Status
+          type: string
+          jsonPath: .status.phase
+          description: Erda cluster current status
+        - name: LastMessage
+          type: string
+          jsonPath: .status.conditions[0].reason
+          description: last message
+      subresources:
+        status: {}
 ```
 
-![image-20230118131537207](README.assets/image-20230118131537207.png)
+![image-20230130154709091](README.assets/image-20230130154709091.png)
 
 ##### Step 3. 安装Erda
 
 ```shell
 cd erda
-helm install ./ --generate-name -n erda-system --create-namespace
+helm install erda ./  -n erda-system --create-namespace
 ```
 
-![image-20230118132000623](README.assets/image-20230118132000623.png)
+
+
+![image-20230130170828150](README.assets/image-20230130170828150.png)
+
+![image-20230130164553572](README.assets/image-20230130164553572.png)
+
+![image-20230130165038666](README.assets/image-20230130165038666.png)
+
+Erda-Redis-Operator、Erda-Operator出错，Cassandra和Buildkitsd没有创建出来
+
+![image-20230130165504901](README.assets/image-20230130165504901.png)
+
+
+
+##### 尝试装Redis哨兵版
+
+```shell
+helm repo add redis-operator https://spotahome.github.io/redis-operator
+helm repo update
+helm install redis-operator redis-operator/redis-operator -n erda-system
+```
 
 
 
 ## 相关材料
 
 * ERDA安装说明：https://docs.erda.cloud/2.2/manual/install/helm-install/helm-install-demo.html
+* K8s CRD定义：https://kubernetes.io/docs/reference/kubernetes-api/extend-resources/custom-resource-definition-v1/
