@@ -67,7 +67,7 @@ EOF
 
 验证结果，
 
-![image-20221021114144518](images/image-20221021114144518.png)
+![image-20221021114144518](images/Cover.png)
 
 完结！
 

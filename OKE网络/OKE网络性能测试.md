@@ -231,14 +231,13 @@ kubectl --context=ctx-npn exec -it iperf-client-54d6bc7b5c-j2j9w -- /bin/sh
 
 
 
-![image-20230111183553032](OKE 网络性能测试.assets/image-20230111183553032.png)
+![image-20230111183553032](OKE网络性能测试.assets/image-20230111183553032.png)
 
 
 
-![image-20230111183606629](OKE 网络性能测试.assets/image-20230111183606629.png)
+![image-20230111183606629](OKE网络性能测试.assets/image-20230111183606629.png)
 
 左边是VCN-Native -> Flannel , 右边是Flannel -> VCN-Native 
 
-![image-20230111183940546](OKE 网络性能测试.assets/image-20230111183940546.png)
-
+![image-20230111183940546](OKE网络性能测试.assets/image-20230111183940546.png)
 
