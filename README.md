@@ -23,6 +23,7 @@
 - [在OKE上创建基于FileStorage(NFS)的StorageClass](./在OKE上创建基于FileStorage(NFS)的StorageClass/README.md)
 - [在OKE上安装NGINXIngressController](./在OKE上安装NGINXIngressController/README.md)
 - [在OKE上安装Rancher](./在OKE上安装Rancher/README.md)
+- [在OKE上安装ElasticGPU分片工具](OKE-GPU计算/在OKE中安装腾讯ElasticGPU分片工具.md)
 
 
 
