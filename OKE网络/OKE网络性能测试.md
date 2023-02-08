@@ -220,14 +220,14 @@ kubectl --context=ctx-npn exec -it iperf-client-54d6bc7b5c-j2j9w -- /bin/sh
 
 
 
-| client         | server                         | 命令                                              | 结果            |
-| -------------- | ------------------------------ | ------------------------------------------------- | --------------- |
-| Flannel pod    | Flannel pod (另一Node的Pod)    | /bin/iperf3 -c 10.244.0.134 -i 1 w 1M             | 10.3Gbps,很稳定 |
-| VCN-Native pod | VCN-Native pod (另一Node的Pod) | /bin/iperf3 -c 10.0.10.145 -i 1 w 1M              | 11.3Gbps,有波动 |
-| VCN-Native pod | Flannel pod                    | /bin/iperf3 -c 193.122.163.226 -i 1 w 1M          | 2.12Gbps,很稳定 |
-| Flannel pod    | VCN-Native pod                 | /bin/iperf3 -c 193.122.180.156 -i 1 w 1M          | 2.12Gbps,很稳定 |
-| VCN-Native pod | Flannel pod                    | /bin/iperf3 -c xxx.xxx.xxx.xxx -i 1 w 1M -u -b 2G | NLB受限，没测   |
-| Flannel pod    | VCN-Native pod                 | /bin/iperf3 -c xxx.xxx.xxx.xxx -i 1 w 1M -u -b 2G | NLB受限，没测   |
+| client         | server                         | 命令                                              | 结果                                      |
+| -------------- | ------------------------------ | ------------------------------------------------- | ----------------------------------------- |
+| Flannel pod    | Flannel pod (另一Node的Pod)    | /bin/iperf3 -c 10.244.0.134 -i 1 w 1M             | 10.3Gbps,很稳定                           |
+| VCN-Native pod | VCN-Native pod (另一Node的Pod) | /bin/iperf3 -c 10.0.10.145 -i 1 w 1M              | 11.3Gbps,性能增强了，速率稍微有一点点波动 |
+| VCN-Native pod | Flannel pod                    | /bin/iperf3 -c 193.122.163.226 -i 1 w 1M          | 2.12Gbps,很稳定                           |
+| Flannel pod    | VCN-Native pod                 | /bin/iperf3 -c 193.122.180.156 -i 1 w 1M          | 2.12Gbps,很稳定                           |
+| VCN-Native pod | Flannel pod                    | /bin/iperf3 -c xxx.xxx.xxx.xxx -i 1 w 1M -u -b 2G | NLB受限，没测                             |
+| Flannel pod    | VCN-Native pod                 | /bin/iperf3 -c xxx.xxx.xxx.xxx -i 1 w 1M -u -b 2G | NLB受限，没测                             |
 
 
 
