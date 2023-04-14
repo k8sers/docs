@@ -84,7 +84,9 @@ Ingress 也是依赖OCI LB，所以还是需要配置第1 或第2步 中对LB的
 request.getRemoteAddr() 
 ```
 
-
+参考yaml
+- FLB [ingress-nginx-deploy-sourceip-flb.yaml](ingress-nginx-deploy-sourceip-flb.yaml)
+- NLB [nlb-svc.yml](nlb-svc.yml)
 
 参考文档：
 
