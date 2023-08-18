@@ -231,7 +231,7 @@ su opc
 
 测试结果：Flannel多用0.1 OCPU（5% CPU），内存几乎一样。
 
-![image-20230818194640420](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818194640420.png)
+![image-20230818194640420](OKE网络性能测试.assets/image-20230818194640420.png)
 
 ##### Step 1. TCP 协议
 
@@ -239,25 +239,25 @@ su opc
 
 左边是Flannel结果7.92Gbps，右边是VCN-Native结果7.96Gbps, 差异不大(Flannel叠加头体积与TCP 1MByte/500Byte的数据窗口相比可以忽略不计）：
 
-![image-20230817173423406](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230817173423406.png)
+![image-20230817173423406](OKE网络性能测试.assets/image-20230817173423406.png)
 
-![image-20230818105117193](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818105117193.png)
+![image-20230818105117193](OKE网络性能测试.assets/image-20230818105117193.png)
 
-![image-20230818185101054](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818185101054.png)
+![image-20230818185101054](OKE网络性能测试.assets/image-20230818185101054.png)
 
-![image-20230818190509325](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818190509325.png)
+![image-20230818190509325](OKE网络性能测试.assets/image-20230818190509325.png)
 
 下面iperf客户端所在的Node监控指标，左边是Flannel，右边是VCN-Native。因为客户端负责发送流量，所以左边的Flannel使用了额外的5%CPU用于Flannel封包（叠加VXLAN头）
 
-![image-20230818185432992](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818185432992.png)
+![image-20230818185432992](OKE网络性能测试.assets/image-20230818185432992.png)
 
 下面iperf服务端所在的Node监控指标，左边是Flannel，右边是VCN-Native。因为服务端负责接受流量，所以左边的Flannel使用了额外的5%CPU用于Flannel解封包（去除叠加VXLAN头）
 
-![image-20230818185640864](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818185640864.png)
+![image-20230818185640864](OKE网络性能测试.assets/image-20230818185640864.png)
 
 至于OCI对Instance的网络监控意义不大。 从监控上看，Flannel的网络流量是Native的2倍（VCN-Native有2张网卡，所以结果除以了2？正在与PM确认中。。）
 
-![image-20230818190031649](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818190031649.png)
+![image-20230818190031649](OKE网络性能测试.assets/image-20230818190031649.png)
 
 为了方便显示真实流量，我在上面的4台Node上都安装了iftop工具，可以看出网卡的流量与速率与iperf结果一致。
 
@@ -272,23 +272,23 @@ sudo iftop -i ens5
 
 Flannel的iperf客户端所在Node的ens3网卡：
 
-![image-20230818104820996](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818104820996.png)
+![image-20230818104820996](OKE网络性能测试.assets/image-20230818104820996.png)
 
 Flannel的iperf服务端所在Node的ens3网卡：
 
-![image-20230818104831900](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818104831900.png)
+![image-20230818104831900](OKE网络性能测试.assets/image-20230818104831900.png)
 
 VCN-Native的iperf客户端所在Node的ens5网卡：
 
-![image-20230818104842471](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818104842471.png)
+![image-20230818104842471](OKE网络性能测试.assets/image-20230818104842471.png)
 
 VCN-Native的iperf服务端所在Node的ens5网卡：
 
-![image-20230818104905243](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818104905243.png)
+![image-20230818104905243](OKE网络性能测试.assets/image-20230818104905243.png)
 
 VCN-Native模式的ENS3网卡几乎没流量
 
-![image-20230818104931345](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818104931345.png)
+![image-20230818104931345](OKE网络性能测试.assets/image-20230818104931345.png)
 
 
 
@@ -298,15 +298,15 @@ VCN-Native模式的ENS3网卡几乎没流量
 
 用8Gbps的UDP流量打满Flannel CNI与VCN-Native CNI。因为还有额外的头信息，所以实际打的流量会轻微超过网卡的8Gbps（出现小概率丢包）
 
-![image-20230818192519791](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818192519791.png)
+![image-20230818192519791](OKE网络性能测试.assets/image-20230818192519791.png)
 
 iperf客户端所在Node的CPU情况还是Flannel要高5%（发送流量时添加VXLAN头）
 
-![image-20230818192853098](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818192853098.png)
+![image-20230818192853098](OKE网络性能测试.assets/image-20230818192853098.png)
 
 iperf服务端所在Node的CPU情况反而是Flannel要低2%。
 
-![image-20230818193045701](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818193045701.png)
+![image-20230818193045701](OKE网络性能测试.assets/image-20230818193045701.png)
 
 ##### Step 3. UDP 协议(正常速率)
 
@@ -314,15 +314,15 @@ iperf服务端所在Node的CPU情况反而是Flannel要低2%。
 
 用7.4Gbps的UDP流量压Flannel CNI与VCN-Native CNI。这时两种CNI处理能力都是7.4Gbps，这时可以分析丢包与抖动情况。结果显示Flannel性能更好（与PM的报告结果相反）
 
-![image-20230818193741805](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818193741805.png)
+![image-20230818193741805](OKE网络性能测试.assets/image-20230818193741805.png)
 
 iperf客户端所在Node的CPU情况还是Flannel要高5%（发送流量时添加VXLAN头）
 
-![image-20230818194121209](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818194121209.png)
+![image-20230818194121209](OKE网络性能测试.assets/image-20230818194121209.png)
 
 iperf服务端所在Node的CPU情况反而是Flannel要低2%。
 
-![image-20230818200729275](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818200729275.png)
+![image-20230818200729275](OKE网络性能测试.assets/image-20230818200729275.png)
 
 ### 2.2 集群外测试VM --> NLB --> Kube-Proxy --> Flannel --> Pod
 
@@ -330,7 +330,7 @@ iperf服务端所在Node的CPU情况反而是Flannel要低2%。
 
 **注意：下图中红色的线是通过Flannel转发的。**
 
-![image-20230818231749411](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818231749411.png)
+![image-20230818231749411](OKE网络性能测试.assets/image-20230818231749411.png)
 
 此时，流量收WorkNode-0的总带宽限制（8Gbps = RX 4Gbps + TX 4Gbps)，最终流量只能有4Gbps 
 
@@ -343,21 +343,21 @@ iperf3 -c 10.0.20.220 --time=3600 --interval 10 w 1K
 sudo iftop -i ens3
 ```
 
-![image-20230818223114102](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818223114102.png)
+![image-20230818223114102](OKE网络性能测试.assets/image-20230818223114102.png)
 
 
 
 WorkNode-0有流入和流出的流量。这个流量是从NLB流进来， 并转发到WorkNode-2 上. （请忽略SSH标签页名称Flannel-0/1/2，看iftop正文中显示的主机名)
 
-![image-20230818224742865](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818224742865.png)
+![image-20230818224742865](OKE网络性能测试.assets/image-20230818224742865.png)
 
-![image-20230818230642198](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818230642198.png)
+![image-20230818230642198](OKE网络性能测试.assets/image-20230818230642198.png)
 
 WorkNode-2 收到 WorkNode-0的流量：
 
-![image-20230818222840794](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818222840794.png)
+![image-20230818222840794](OKE网络性能测试.assets/image-20230818222840794.png)
 
-![image-20230818230854098](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818230854098.png)
+![image-20230818230854098](OKE网络性能测试.assets/image-20230818230854098.png)
 
 ### 2.2 集群外测试VM --> NLB --> Kube-Proxy --> VCN-Native --> Pod
 
@@ -365,7 +365,7 @@ WorkNode-2 收到 WorkNode-0的流量：
 
 **注意：下图中红色的线是通过VCN云网络转发的。**
 
-![image-20230818235856951](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818235856951.png)
+![image-20230818235856951](OKE网络性能测试.assets/image-20230818235856951.png)
 
 
 
@@ -385,29 +385,29 @@ sudo iftop -i ens5
 
 
 
-![image-20230818233354878](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818233354878.png)
+![image-20230818233354878](OKE网络性能测试.assets/image-20230818233354878.png)
 
 
 
 WorkNode-3的Kube-Proxy（Iptables）在ens3网卡上，收到了来自NLB的包。 然后Kubeproxy(Iptables)又把它转到了10.0.10.246这个Pod中(也是从ens3走的)：
 
-![image-20230818235247337](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818235247337.png)
+![image-20230818235247337](OKE网络性能测试.assets/image-20230818235247337.png)
 
-![image-20230819000711631](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230819000711631.png)
+![image-20230819000711631](OKE网络性能测试.assets/image-20230819000711631.png)
 
 可以看到10.0.10.246这个pod在10.0.10.110这个Node上
 
-![image-20230818232832352](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818232832352.png)
+![image-20230818232832352](OKE网络性能测试.assets/image-20230818232832352.png)
 
 10.0.10.110对应的node是WorkNode-1
 
-![image-20230818235722199](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818235722199.png)
+![image-20230818235722199](OKE网络性能测试.assets/image-20230818235722199.png)
 
 WorkNode-1的ENS5网卡（Pods网卡）有流入流量，从WorkNode-3的ens3网卡（Node网卡）而来。
 
-![image-20230818235103072](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818235103072.png)
+![image-20230818235103072](OKE网络性能测试.assets/image-20230818235103072.png)
 
-![image-20230819000801149](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230819000801149.png)
+![image-20230819000801149](OKE网络性能测试.assets/image-20230819000801149.png)
 
 
 
