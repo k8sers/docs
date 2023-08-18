@@ -201,7 +201,7 @@ sudo wget --no-check-certificate https://iperf.fr/download/fedora/iperf3-3.1.3-1
 sudo rpm -ivh iperf3-3.1.3-1.fc24.x86_64.rpm
 
 sudo su
-# 注意更换下面nlb的IP
+# 使用域名测试更方便。注意更换下面nlb的IP
 echo "10.0.20.158 nlb-oke-native" >> /etc/hosts
 echo "10.0.20.220 nlb-oke-flannel" >> /etc/hosts
 su opc
@@ -213,6 +213,10 @@ su opc
 
 
 ## 2. Flannel 与 VCN-Native 网络测试
+
+2.1 集群内Pod相互通信是为了让大家了解不通的OKE CNI在性能和资源消耗方面的差异。 
+
+2.2 与 2.3 从集群外访问，目的是为了让大家了解OKE(K8s)的网络运行机制，至于性能和资源消耗方面请看 2.1。
 
 ### 2.1 集群内 Pod --> 另一台Node上的Pod
 
@@ -319,3 +323,103 @@ iperf客户端所在Node的CPU情况还是Flannel要高5%（发送流量时添�
 iperf服务端所在Node的CPU情况反而是Flannel要低2%。
 
 ![image-20230818200729275](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818200729275.png)
+
+### 2.2 集群外测试VM --> NLB --> Kube-Proxy --> Flannel --> Pod
+
+在本次测试中，NLB通过Hash算法选中了 WorkNode-0，流量转发到WorkNode-0上的NodePort端口。 这个K8s service的端口由Kube-Proxy（Iptables）维护，并通过Iptables的随机函数选中了WorkNode-2的Pod，通过Flannel转发给WorkNode-2。（如果Iptables随机到WorkNode-0自身的Pod，则不需要Flannel转发，这样也没了测试CNI的意义。但这样对生产环境有意义，因为带宽看起来扩大了1倍，实则带宽扩大2/3倍，因为只有2/3的概率会被Flannel转发）。
+
+**注意：下图中红色的线是通过Flannel转发的。**
+
+![image-20230818231749411](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818231749411.png)
+
+此时，流量收WorkNode-0的总带宽限制（8Gbps = RX 4Gbps + TX 4Gbps)，最终流量只能有4Gbps 
+
+```shell
+#向NLB的内网IP打流量
+iperf3 -c 10.0.20.220 --time=3600 --interval 10 w 1K
+
+
+#在所有worknode上监听
+sudo iftop -i ens3
+```
+
+![image-20230818223114102](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818223114102.png)
+
+
+
+WorkNode-0有流入和流出的流量。这个流量是从NLB流进来， 并转发到WorkNode-2 上. （请忽略SSH标签页名称Flannel-0/1/2，看iftop正文中显示的主机名)
+
+![image-20230818224742865](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818224742865.png)
+
+![image-20230818230642198](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818230642198.png)
+
+WorkNode-2 收到 WorkNode-0的流量：
+
+![image-20230818222840794](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818222840794.png)
+
+![image-20230818230854098](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818230854098.png)
+
+### 2.2 集群外测试VM --> NLB --> Kube-Proxy --> VCN-Native --> Pod
+
+在本次测试中，NLB通过Hash算法选中了 WorkNode-3，流量转发到WorkNode-0上的NodePort端口。 这个K8s service的端口由Kube-Proxy（Iptables）维护，并通过Iptables的随机函数选中了WorkNode-1的Pod，此时Kube-Proxy（Iptables）把数据包直接丢给VCN处理，VCN能正确找到所有Pod，因为所有Pod的IP都在Worknode的第二块网卡上挂有Pod IP。（与Flannel一样，如果Iptables随机到WorkNode-3自身的Pod，则不需要VCN转发，这样也没了测试CNI的意义。但这样对生产环境有意义，因为带宽看起来扩大了1倍，实则带宽扩大2/3倍，因为只有2/3的概率会被VCN转发）。
+
+**注意：下图中红色的线是通过VCN云网络转发的。**
+
+![image-20230818235856951](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818235856951.png)
+
+
+
+
+
+此时，流量收WorkNode-3的总带宽限制（8Gbps = ens3 RX 4Gbps + ens3 TX 4Gbps)，最终流量只能有4Gbps 
+
+```shell
+#在Test VM上向NLB的内网IP打流量
+iperf3 -c 10.0.20.158 --time=3600 --interval 10 w 1K
+
+#在所有worknode上监听Node网卡
+sudo iftop -i ens3
+#在所有worknode上监听Pod网卡
+sudo iftop -i ens5
+```
+
+
+
+![image-20230818233354878](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818233354878.png)
+
+
+
+WorkNode-3的Kube-Proxy（Iptables）在ens3网卡上，收到了来自NLB的包。 然后Kubeproxy(Iptables)又把它转到了10.0.10.246这个Pod中(也是从ens3走的)：
+
+![image-20230818235247337](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818235247337.png)
+
+![image-20230819000711631](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230819000711631.png)
+
+可以看到10.0.10.246这个pod在10.0.10.110这个Node上
+
+![image-20230818232832352](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818232832352.png)
+
+10.0.10.110对应的node是WorkNode-1
+
+![image-20230818235722199](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818235722199.png)
+
+WorkNode-1的ENS5网卡（Pods网卡）有流入流量，从WorkNode-3的ens3网卡（Node网卡）而来。
+
+![image-20230818235103072](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230818235103072.png)
+
+![image-20230819000801149](E:\Docs\GitDoc\tech-doc\云厂商\甲骨文\PaaS\OKE\OKE网络\OKE网络性能测试.assets\image-20230819000801149.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
