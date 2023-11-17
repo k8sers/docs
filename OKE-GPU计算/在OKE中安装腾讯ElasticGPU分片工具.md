@@ -32,6 +32,10 @@
 
 ![image-20230131120922076](在OKE中安装腾讯ElasticGPU分片工具.assets/image-20230131120922076.png)
 
+如果需要CUDA 11的版本，请选择2023.06月份或之前的镜像（从2023年7月开始，Oracle Linux GPU镜像中的CUDA升级到了12）
+
+![a7b9aae685fd5a3e47b227c075e3c16](在OKE中安装腾讯ElasticGPU分片工具.assets/a7b9aae685fd5a3e47b227c075e3c16.png)
+
 ![image-20230131121032075](在OKE中安装腾讯ElasticGPU分片工具.assets/image-20230131121032075.png)
 
 ![image-20230131121103899](在OKE中安装腾讯ElasticGPU分片工具.assets/image-20230131121103899.png)
@@ -203,6 +207,8 @@ spec:
     operator: "Exists"
     effect: "NoSchedule"
 ```
+
+在CUDA更新到12.0后， 需要更换测试镜像
 
 
 
