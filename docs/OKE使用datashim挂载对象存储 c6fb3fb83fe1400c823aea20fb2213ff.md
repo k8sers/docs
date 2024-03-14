@@ -1,0 +1,1 @@
+# OKE使用datashim挂载对象存储

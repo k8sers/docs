@@ -1,0 +1,1 @@
+# 使用StorageClass挂载共享存储
